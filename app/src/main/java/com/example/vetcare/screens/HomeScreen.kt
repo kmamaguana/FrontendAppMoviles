@@ -2,8 +2,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -17,8 +18,34 @@ import androidx.navigation.NavController
 import com.example.vetcare.R
 import com.example.vetcare.navigation.Screens
 
+data class HomeOption(
+    val title: String,
+    val imageRes: Int,
+    val onClick: () -> Unit
+)
+
 @Composable
 fun HomeScreen(navController: NavController) {
+    val options = listOf(
+        HomeOption("Productos", R.drawable.ic_productos) {
+            navController.navigate(Screens.Products.route)
+        },
+        HomeOption("Clientes", R.drawable.ic_clientes) {
+            navController.navigate(Screens.Clients.route)
+        },
+        HomeOption("Calendario", R.drawable.ic_calendario) {
+            navController.navigate(Screens.Calendar.route)  // <-- Aquí la navegación corregida
+        },
+        HomeOption("Recordatorios", R.drawable.ic_recordatorios) {
+            navController.navigate(Screens.Reminders.route)
+        },
+        HomeOption("Asistente Bot", R.drawable.ic_chatbot) {  // Nuevo servicio agregado
+            navController.navigate(Screens.ChatBot.route)  // Debes crear esta pantalla y ruta
+        }
+
+
+    )
+
     Box(modifier = Modifier.fillMaxSize()) {
         // Fondo
         Image(
@@ -31,72 +58,78 @@ fun HomeScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "Bienvenido a VetCare",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-            // Calendario
-            SectionCard(title = "Calendario") {
-                Text("Aquí irán las citas y eventos programados.")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Productos (con navegación)
-            SectionCard(
-                title = "Productos",
-                modifier = Modifier.clickable {
-                    navController.navigate(Screens.Products.route)
-                }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.9f), shape = RoundedCornerShape(12.dp))
+                    .padding(16.dp)
+                    .clip(RoundedCornerShape(12.dp))
             ) {
-                Text("Listado de productos disponibles.")
+                Text(
+                    text = "Bienvenido a VetCare",
+                    style = MaterialTheme.typography.headlineLarge, // Más grande que headlineMedium
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            // Clientes (con navegación)
-            SectionCard(
-                title = "Clientes",
-                modifier = Modifier.clickable {
-                    navController.navigate(Screens.Clients.route)
-                }
+            // Grid centrado y con tamaño limitado
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f) // 🟢 Para que el grid use el espacio restante del Column
             ) {
-                Text("Lista y detalles de tus clientes.")
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    userScrollEnabled = true, // ✅ Activamos scroll
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp)
+                ) {
+                    items(options) { option ->
+                        HomeOptionCard(option)
+                    }
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Recordatorios
-            SectionCard(title = "Recordatorios") {
-                Text("Tus recordatorios importantes.")
-            }
         }
     }
 }
 
 @Composable
-fun SectionCard(
-    title: String,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
+fun HomeOptionCard(option: HomeOption) {
     Card(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(12.dp)),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+            .aspectRatio(1f)
+            .clickable(onClick = option.onClick),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            content()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Imagen más grande
+            Image(
+                painter = painterResource(id = option.imageRes),
+                contentDescription = option.title,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(80.dp) // Aumentado a 80dp
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(option.title, style = MaterialTheme.typography.titleMedium)
         }
     }
 }
-

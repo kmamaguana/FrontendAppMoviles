@@ -1,12 +1,16 @@
 package com.example.vetcare.screens
+
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -23,7 +27,7 @@ fun RegisterScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Fondo visual
+        // Fondo imagen
         Image(
             painter = painterResource(id = R.drawable.login_background),
             contentDescription = "Fondo Registro",
@@ -31,12 +35,15 @@ fun RegisterScreen(navController: NavController) {
             modifier = Modifier.fillMaxSize()
         )
 
-        // Formulario de registro
+        // Caja blanca con bordes redondeados para el formulario
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(24.dp)
-                .verticalScroll(rememberScrollState()),
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.95f))
+                .padding(24.dp)
+                .align(Alignment.Center), // Centrado vertical y horizontal
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -74,7 +81,7 @@ fun RegisterScreen(navController: NavController) {
 
             Button(
                 onClick = {
-                    // Aquí iría lógica para enviar los datos al servidor
+                    // Aquí iría la lógica para enviar los datos al servidor
                     navController.navigate(Screens.Home.route)
                 },
                 modifier = Modifier.fillMaxWidth()

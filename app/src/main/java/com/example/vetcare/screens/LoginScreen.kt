@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,24 +8,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.NavController
 import com.example.vetcare.R
 import com.example.vetcare.navigation.Screens
-import io.ktor.client.*
-import io.ktor.client.call.body
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 @Serializable
 data class LoginRequest(val email: String, val password: String)
@@ -93,6 +85,28 @@ fun LoginScreen(navController: NavController?) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            Button(
+                onClick = {
+                    // Aquí iría la lógica de autenticación con Google
+                    // Por ahora puedes mostrar un Toast o navegar directamente:
+                    // navController.navigate(Screens.Home.route)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Asegúrate de tener el logo de Google en drawable/google_logo.png
+                    Image(
+                        painter = painterResource(id = R.drawable.google_logo),
+                        contentDescription = "Google Logo",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Continuar con Google", color = Color.Black)
+                }
+
             TextButton(onClick = {
                 navController?.navigate(Screens.Register.route)
             }) {
@@ -100,4 +114,5 @@ fun LoginScreen(navController: NavController?) {
             }
         }
     }
+}
 }

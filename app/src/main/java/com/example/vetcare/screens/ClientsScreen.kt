@@ -6,9 +6,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -19,7 +23,10 @@ import com.example.vetcare.R
 data class Cliente(val id: Int, val nombre: String, val telefono: String)
 
 @Composable
-fun ClientsScreen(onClientClick: (Cliente) -> Unit = {}) {
+fun ClientsScreen(
+    onClientClick: (Cliente) -> Unit = {},
+    onAddClientClick: () -> Unit = {}
+) {
     val clientes = listOf(
         Cliente(1, "Juan Pérez", "0991234567"),
         Cliente(2, "María Gómez", "0987654321"),
@@ -36,39 +43,67 @@ fun ClientsScreen(onClientClick: (Cliente) -> Unit = {}) {
             modifier = Modifier.fillMaxSize()
         )
 
-        // Contenedor semi-transparente para el contenido
+        // Contenedor semi-transparente para la lista
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.85f))
+                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
                 .padding(16.dp)
         ) {
             Text(
                 "Clientes",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(bottom = 16.dp)
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier.padding(bottom = 16.dp),
+                color = MaterialTheme.colorScheme.onSurface
             )
 
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
                 items(clientes) { cliente ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp)
                             .clickable { onClientClick(cliente) },
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                        shape = RoundedCornerShape(12.dp)
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                        shape = RoundedCornerShape(14.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(text = cliente.nombre, style = MaterialTheme.typography.titleMedium)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(text = "Tel: ${cliente.telefono}", style = MaterialTheme.typography.bodyMedium)
+                        Column(modifier = Modifier.padding(20.dp)) {
+                            Text(
+                                text = cliente.nombre,
+                                style = MaterialTheme.typography.titleLarge,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = "Tel: ${cliente.telefono}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+                            )
                         }
                     }
                 }
             }
+        }
+
+        // Floating Action Button para agregar cliente
+        FloatingActionButton(
+            onClick = onAddClientClick,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(24.dp),
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            shape = CircleShape
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Agregar Cliente"
+            )
         }
     }
 }
